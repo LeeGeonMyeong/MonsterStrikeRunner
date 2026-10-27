@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private DamageFeedback feedback;
     private SpriteRenderer artwork;
     private bool chargeSoundPlayed;
+    private float animationAttackAt = -10f;
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -59,6 +60,7 @@ public class PlayerController : MonoBehaviour
         }
         if (IsCharging && ChargeProgress >= 1f && !chargeSoundPlayed)
         { chargeSoundPlayed = true; RunnerAudio.Instance?.ChargeReady(); }
+        artwork.sprite = CharacterFrames.HeroAt(Time.time, IsCharging, ChargeProgress, Time.time - animationAttackAt);
         attackFlash = Mathf.Max(0f, attackFlash - Time.deltaTime);
         float stride = Mathf.Sin(Time.time * 14f);
         float lean = Mathf.Clamp(((currentLane - 1) * laneDistance - body.position.x) * -12f, -15f, 15f);
@@ -111,6 +113,7 @@ public class PlayerController : MonoBehaviour
         if (!CanAttack || Time.time < nextAttack) return false;
         // A full charge recovers quickly; normal fire still reacts faster to close threats.
         nextAttack = Time.time + (piercing ? 0.12f : attackCooldown);
+        animationAttackAt = Time.time;
         attackFlash = 0.2f;
         RunnerAudio.Instance?.Fire(piercing);
         MonsterShot.Create(new Vector3(body.position.x, groundY + 0.65f, 0f), damage, piercing);
@@ -124,6 +127,8 @@ public class PlayerController : MonoBehaviour
         transform.position = new Vector3(0f, groundY, transform.position.z);
         CurrentHP = maxHP;
         nextAttack = attackFlash = 0f;
+        animationAttackAt = -10f;
+        if (artwork != null) artwork.sprite = CharacterFrames.HeroAt(0f, false, 0f, -1f);
         if (visual != null) { visual.localPosition = Vector3.zero; visual.localScale = Vector3.one; }
         UpdateHP();
     }

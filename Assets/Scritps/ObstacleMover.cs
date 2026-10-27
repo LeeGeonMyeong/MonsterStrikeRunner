@@ -81,6 +81,7 @@ public class ObstacleMover : MonoBehaviour
         flash = Mathf.Max(0, flash - Time.deltaTime);
         RefreshAppearance();
         if (flash > 0) artwork.color = Color.white;
+        artwork.sprite = CharacterFrames.MonsterAt(Time.time + transform.position.x * .2f);
         float step = Mathf.Sin(Time.time * 10f + transform.position.x);
         visual.localPosition = Vector3.up * (Mathf.Abs(step) * 0.08f + flash * 0.8f);
         visual.localScale = new Vector3(1f + step * 0.045f + flash, 1f - step * 0.045f - flash, 1f);
