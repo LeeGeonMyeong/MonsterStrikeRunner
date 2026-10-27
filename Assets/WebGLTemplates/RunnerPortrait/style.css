@@ -1,0 +1,12 @@
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #080f20; overscroll-behavior: none; }
+body { box-sizing: border-box; height: 100dvh; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+body { display: flex; align-items: center; justify-content: center; font-family: system-ui, -apple-system, "Malgun Gothic", sans-serif; color: #eefcf7; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+#unity-container { position: relative; flex: none; }
+#unity-canvas { width: 100%; height: 100%; display: block; background: #102238; touch-action: none; outline: none; }
+#unity-loading-bar { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; text-align: center; background: #102238; }
+h1 { font-size: clamp(22px, 6vw, 36px); color: #73ffd5; line-height: 1.3; }
+p { line-height: 1.6; font-size: 15px; }
+progress { width: 85%; height: 18px; accent-color: #43d8a8; }
+#unity-warning { position: absolute; left: 5%; right: 5%; top: 8%; padding: 18px; background: #7e2934; line-height: 1.5; overflow-wrap: anywhere; }
+
+.hero { width: 110px; height: 110px; object-fit: contain; }

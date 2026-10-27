@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>몬스터 스트라이크 러너</title>
+  <link rel="stylesheet" href="style.css?v=1.1.1">
+</head>
+<body>
+  <main id="unity-container">
+    <canvas id="unity-canvas" width="480" height="854" tabindex="0" aria-label="몬스터 스트라이크 러너"></canvas>
+    <div id="unity-loading-bar" role="status">
+      <img class="hero" src="hero.png?v=1.1.1" alt="플레이어 캐릭터">
+      <h1>몬스터 스트라이크<br>러너</h1>
+      <p>화살표 버튼으로 이동하고, 공격해 몬스터를 막아 보세요.</p>
+      <progress id="progress" max="1" value="0"></progress>
+      <p id="loading-label">불러오는 중 0%</p>
+    </div>
+    <div id="unity-warning" role="alert" hidden></div>
+  </main>
+  <script>
+    var canvas = document.querySelector("#unity-canvas");
+    function unityShowBanner(message, type) {
+      var banner = document.querySelector("#unity-warning");
+      banner.hidden = false;
+      banner.textContent = /[가-힣]/.test(message) ? message : "게임을 불러오지 못했어요. 잠시 후 새로고침해 주세요.";
+      if (!/[가-힣]/.test(message)) console.error(message);
+      if (type !== "error") setTimeout(() => { banner.hidden = true; }, 5000);
+    }
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/9e04dba528a53c604a8d2caf7b905d42.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/022b28c66d8e0c34f77ab228c52a3972.data.unityweb",
+        frameworkUrl: buildUrl + "/f4054838284b89005d7b24c799302766.framework.js.unityweb",
+        codeUrl: buildUrl + "/e10394a3227b9676b8763e2ddd09f30c.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "Monster Strike Runner",
+        productVersion: "1.1.1",
+        showBanner: unityShowBanner,
+        // errorHandler: function(err, url, line) {
+        //    alert("error " + err + " occurred at line " + line);
+        //    // Return 'true' if you handled this error and don't want Unity
+        //    // to process it further, 'false' otherwise.
+        //    return true;
+        // },
+      };
+
+
+    config.devicePixelRatio = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
+    function fitCanvas() {
+      var viewport = window.visualViewport;
+      var width = viewport ? viewport.width : window.innerWidth;
+      var height = viewport ? viewport.height : window.innerHeight;
+      var safe = getComputedStyle(document.body);
+      width -= (parseFloat(safe.paddingLeft) || 0) + (parseFloat(safe.paddingRight) || 0);
+      height -= (parseFloat(safe.paddingTop) || 0) + (parseFloat(safe.paddingBottom) || 0);
+      var gameWidth = Math.min(width, height * 480 / 854);
+      var container = document.querySelector("#unity-container");
+      container.style.width = gameWidth + "px";
+      container.style.height = gameWidth * 854 / 480 + "px";
+    }
+    window.addEventListener("resize", fitCanvas);
+    if (window.visualViewport) window.visualViewport.addEventListener("resize", fitCanvas);
+    fitCanvas();
+    canvas.addEventListener("contextmenu", event => event.preventDefault());
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onerror = () => unityShowBanner("게임을 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.", "error");
+    script.onload = () => {
+      createUnityInstance(canvas, config, progress => {
+        document.querySelector("#progress").value = progress;
+        document.querySelector("#loading-label").textContent = "불러오는 중 " + Math.round(progress * 100) + "%";
+      }).then(() => {
+        document.querySelector("#unity-loading-bar").style.display = "none";
+        canvas.focus();
+      }).catch(message => unityShowBanner(message, "error"));
+    };
+    if (window.location.protocol === "file:") {
+      unityShowBanner("게임 실행 주소로 접속해 주세요. 파일을 직접 열면 실행되지 않아요.", "error");
+    } else {
+      document.body.appendChild(script);
+    }
+  </script>
+</body>
+</html>

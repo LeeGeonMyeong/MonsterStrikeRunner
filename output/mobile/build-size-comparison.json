@@ -1,0 +1,26 @@
+{
+  "before_bytes": 69579551,
+  "after_bytes": 10647469,
+  "reduction_percent": 84.69741634291374,
+  "before_files": {
+    ".nojekyll": 0,
+    "hero.png": 1994024,
+    "index.html": 3632,
+    "style.css": 1075,
+    "Build\\docs.data": 18648437,
+    "Build\\docs.framework.js": 462565,
+    "Build\\docs.loader.js": 26983,
+    "Build\\docs.wasm": 48442835
+  },
+  "after_files": {
+    ".nojekyll": 0,
+    "hero.png": 37969,
+    "index.html": 3721,
+    "style.css": 1075,
+    "Build\\docs.data.unityweb": 4683730,
+    "Build\\docs.framework.js.unityweb": 75191,
+    "Build\\docs.loader.js": 117894,
+    "Build\\docs.wasm.unityweb": 5727889
+  },
+  "pages_url": "https://leegeonmyeong.github.io/MonsterEscapeRunner/"
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "fits": true,
+    "game": {
+      "height": 568,
+      "width": 319.25,
+      "x": 0.375,
+      "y": 0
+    },
+    "height": 568,
+    "warningHidden": true,
+    "width": 320
+  },
+  {
+    "fits": true,
+    "game": {
+      "height": 640.5,
+      "width": 360,
+      "x": 0,
+      "y": 79.75
+    },
+    "height": 800,
+    "warningHidden": true,
+    "width": 360
+  },
+  {
+    "fits": true,
+    "game": {
+      "height": 693.875,
+      "width": 390,
+      "x": 0,
+      "y": 75.0625
+    },
+    "height": 844,
+    "warningHidden": true,
+    "width": 390
+  },
+  {
+    "fits": true,
+    "game": {
+      "height": 765.03125,
+      "width": 430,
+      "x": 0,
+      "y": 83.484375
+    },
+    "height": 932,
+    "warningHidden": true,
+    "width": 430
+  },
+  {
+    "fits": true,
+    "game": {
+      "height": 1024,
+      "width": 575.546875,
+      "x": 96.21875,
+      "y": 0
+    },
+    "height": 1024,
+    "warningHidden": true,
+    "width": 768
+  },
+  {
+    "fits": true,
+    "game": {
+      "height": 390,
+      "width": 219.203125,
+      "x": 312.390625,
+      "y": 0
+    },
+    "height": 390,
+    "warningHidden": true,
+    "width": 844
+  }
+]

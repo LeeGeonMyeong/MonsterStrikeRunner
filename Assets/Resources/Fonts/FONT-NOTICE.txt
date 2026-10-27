@@ -1,0 +1,4 @@
+Runner Korean is a UI subset of Noto Sans KR (weight 500).
+Source: https://github.com/google/fonts/tree/main/ofl/notosanskr
+Distributed under SIL Open Font License 1.1; see OFL.txt.
+Renamed to Runner Korean. Rebuild with tools/subset_korean_font.py when UI copy changes.

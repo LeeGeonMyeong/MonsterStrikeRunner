@@ -1,0 +1,14 @@
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Bb]uild/
+/[Bb]uilds/
+/.vs/
+/*.csproj
+/*.sln
+/DevelopmentBackup/
+/PreviewOutput/
+/tmp/
+# Keep docs/ in version control: it is the GitHub Pages output.
