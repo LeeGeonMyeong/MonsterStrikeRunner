@@ -98,6 +98,7 @@ public class ObstacleMover : MonoBehaviour
     {
         if (IsResolved || damage <= 0 || GameManager.Instance == null || !GameManager.Instance.IsPlaying) return false;
         Health = Mathf.Max(0, Health - damage);
+        RunnerAudio.Instance?.MonsterHit(Health == 0);
         flash = 0.12f;
         RefreshAppearance();
         MonsterShot.Burst(transform.position, Health == 0 ? new Color(1f, 0.75f, 0.2f) : Color.white);

@@ -11,7 +11,7 @@ public static class RunnerWebBuild
     [MenuItem("Runner/Build Web for GitHub Pages")]
     public static void Build()
     {
-        PlayerSettings.bundleVersion = "1.1.1";
+        PlayerSettings.bundleVersion = "1.1.2";
         PlayerSettings.defaultWebScreenWidth = 480;
         PlayerSettings.defaultWebScreenHeight = 854;
         PlayerSettings.WebGL.template = "PROJECT:RunnerPortrait";
@@ -22,7 +22,7 @@ public static class RunnerWebBuild
         PlayerSettings.stripEngineCode = true;
         PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.WebGL, ManagedStrippingLevel.High);
         PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WebGL, Il2CppCodeGeneration.OptimizeSize);
-        UnityEditor.WebGL.UserBuildSettings.codeOptimization = UnityEditor.WebGL.WasmCodeOptimization.DiskSizeLTO;
+        UnityEditor.WebGL.UserBuildSettings.codeOptimization = UnityEditor.WebGL.WasmCodeOptimization.DiskSize;
         OptimizeTexture("Assets/Resources/Characters/RunnerHero.png", 256);
         OptimizeTexture("Assets/Resources/Characters/RunnerMonster.png", 256);
         OptimizeTexture("Assets/Resources/Backgrounds/ForestRoad.png", 1024);

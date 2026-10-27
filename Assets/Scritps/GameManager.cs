@@ -51,11 +51,13 @@ public class GameManager : MonoBehaviour
     private Text tutorialTitle, tutorialBody;
     private Coroutine tutorialAdvance;
     private Text itemNotice, versionLabel;
+    private Button soundButton;
     private float itemNoticeTime;
     private void Awake()
     {
         Instance = this;
         State = RunState.Ready;
+        gameObject.AddComponent<RunnerAudio>();
         gameObject.AddComponent<RunnerBackground>();
         gameObject.AddComponent<RunnerItemSpawner>();
         font = Resources.Load<Font>("Fonts/RunnerKorean");
@@ -110,9 +112,15 @@ public class GameManager : MonoBehaviour
         versionLabel = MakeText("BuildVersion", canvas.transform, new Vector2(1f, 1f), new Vector2(-58f, -14f), new Vector2(106f, 24f), 15);
         versionLabel.text = "v" + Application.version;
         versionLabel.color = new Color(0.8f, 0.92f, 0.93f);
+        soundButton = MakeControlButton("SoundButton", canvas.transform, new Vector2(54f, -22f),
+            new Vector2(100f, 40f), "", new Vector2(0f, 1f));
+        soundButton.GetComponentInChildren<Text>().fontSize = 18;
+        UpdateSoundLabel();
+        soundButton.onClick.AddListener(() => { RunnerAudio.Instance.ToggleMute(); UpdateSoundLabel(); });
         SetControlsVisible(false);
         RefreshStatus();
     }
+    private void UpdateSoundLabel() => soundButton.GetComponentInChildren<Text>().text = RunnerAudio.Instance.Muted ? "소리 끔" : "소리 켬";
     private void Update()
     {
         UpdateFeedback();
@@ -138,11 +146,13 @@ public class GameManager : MonoBehaviour
         itemNoticeTime = 0f;
         foreach (RunnerItem item in FindObjectsByType<RunnerItem>(FindObjectsSortMode.None)) item.gameObject.SetActive(false);
         State = RunState.Ended;
+        RunnerAudio.Instance?.Finish(survived);
         result.text = (survived ? "방어 성공!" : "게임 종료") + "\n최종 점수 " + CurrentScore + "\n처치 " + Kills + " / 놓침 " + Misses + "\n아이템 " + ItemsCollected + "개 / 보너스 " + ItemScore;
         SetControlsVisible(false);
         gameOverPanel.SetActive(true);
         gameOverPanel.transform.SetAsLastSibling();
         versionLabel.transform.SetAsLastSibling();
+        soundButton.transform.SetAsLastSibling();
     }
     private void Restart() { SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); }
     private void OnDestroy() { if (Instance == this) Instance = null; }
@@ -163,6 +173,7 @@ public class GameManager : MonoBehaviour
         displayedLevel = 1;
         noticeTime = 0f;
         State = RunState.Playing;
+        RunnerAudio.Instance?.StartMusic();
         startPanel.SetActive(false);
         tutorialGuide.SetActive(false);
         tutorialFinish.SetActive(false);
@@ -232,6 +243,7 @@ public class GameManager : MonoBehaviour
         ClearPracticeShots();
         player.ResetPractice();
         State = RunState.Tutorial;
+        RunnerAudio.Instance?.StartMusic();
         TutorialStep = 0;
         startPanel.SetActive(false);
         tutorialFinish.SetActive(false);
@@ -262,6 +274,7 @@ public class GameManager : MonoBehaviour
             tutorialFinish.SetActive(true);
             tutorialFinish.transform.SetAsLastSibling();
             versionLabel.transform.SetAsLastSibling();
+        soundButton.transform.SetAsLastSibling();
         }
     }
     public void HintIncompleteCharge()
@@ -419,6 +432,7 @@ public class GameManager : MonoBehaviour
     {
         if (!IsPlaying) return;
         ItemsCollected++;
+        RunnerAudio.Instance?.Heal();
         bool healed = player.RestoreHealth();
         int points = healed ? 0 : 50;
         ItemScore += points;

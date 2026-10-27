@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private float groundY, nextAttack, chargeStarted, attackFlash;
     private DamageFeedback feedback;
     private SpriteRenderer artwork;
+    private bool chargeSoundPlayed;
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -56,6 +57,8 @@ public class PlayerController : MonoBehaviour
             if (keyboard.downArrowKey.wasPressedThisFrame) BeginCharge();
             if (keyboard.downArrowKey.wasReleasedThisFrame) ReleaseCharge();
         }
+        if (IsCharging && ChargeProgress >= 1f && !chargeSoundPlayed)
+        { chargeSoundPlayed = true; RunnerAudio.Instance?.ChargeReady(); }
         attackFlash = Mathf.Max(0f, attackFlash - Time.deltaTime);
         float stride = Mathf.Sin(Time.time * 14f);
         float lean = Mathf.Clamp(((currentLane - 1) * laneDistance - body.position.x) * -12f, -15f, 15f);
@@ -90,6 +93,7 @@ public class PlayerController : MonoBehaviour
         if (!CanAttack || IsCharging || Time.time < nextAttack) return;
         IsCharging = true;
         chargeStarted = Time.time;
+        chargeSoundPlayed = false;
     }
     public void ReleaseCharge()
     {
@@ -108,6 +112,7 @@ public class PlayerController : MonoBehaviour
         // A full charge recovers quickly; normal fire still reacts faster to close threats.
         nextAttack = Time.time + (piercing ? 0.12f : attackCooldown);
         attackFlash = 0.2f;
+        RunnerAudio.Instance?.Fire(piercing);
         MonsterShot.Create(new Vector3(body.position.x, groundY + 0.65f, 0f), damage, piercing);
         return true;
     }
@@ -126,6 +131,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!CanAttack || !GameManager.Instance.IsPlaying) return;
         CurrentHP = Mathf.Max(0, CurrentHP - 1);
+        RunnerAudio.Instance?.Hurt();
         UpdateHP();
         feedback.Play(visual.position);
         int lostScore = GameManager.Instance.ApplyCollisionPenalty();

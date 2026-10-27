@@ -1,4 +1,4 @@
-# Monster Strike Runner v1.1.1
+# Monster Strike Runner v1.1.2
 
 몬스터를 공격해 처치하고 방어선을 지키는 모바일 세로형 2D 러너입니다. 시작 → 전투 → 결과 → 재시작으로 한 판을 반복합니다.
 
@@ -49,7 +49,7 @@
 
 숲 배경과 맞춘 청록 궁수·보라 수정 몬스터를 수직으로 내려다보는 탑뷰 스프라이트로 사용합니다. 달리기 리듬, 차선 이동 기울기, 공격 반동, 충전 떨림, 피격 반응, 처치 시 회전·축소·사라짐을 적용했습니다. 이미지 생성 기록과 변경 범위는 [통합 수정 안내](output/tutorial/피드백_통합수정.md)에 있습니다.
 
-- Unity 6000.3.23f1 / Input System / WebGL. 캔버스와 UI 기준 480 × 854. 화면 오른쪽 위에 v1.1.1을 표시합니다.
+- Unity 6000.3.23f1 / Input System / WebGL. 캔버스와 UI 기준 480 × 854. 화면 오른쪽 위에 v1.1.2을 표시합니다.
 - Assets/Scenes/SampleScene을 열고 Play → 게임 시작으로 실행합니다. Inspector 연결 작업은 추가로 필요하지 않습니다.
 - Runner → Build Web for GitHub Pages 메뉴는 프로젝트 루트 docs에 웹 빌드를 생성합니다.
 - 커스텀 RunnerPortrait 템플릿, Brotli 압축, Decompression Fallback 활성화, 코드 용량 최적화(LTO), WebGL 관리 코드 High stripping, SampleScene 포함으로 빌드합니다.
@@ -85,3 +85,8 @@ Unity 전투 검사: Assets/Editor/RunnerSmokeCheck.cs. 기존 RunnerMobileCheck
 특정 모델 전용이 아닌 웹 게임입니다. 화면 크기와 회전에 맞춰 세로 게임 화면을 맞추고 iOS 노치·홈 표시 영역의 안전 여백을 고려합니다. Unity 6.3 공식 브라우저 지원 기준은 iOS Safari 15 이상과 Android Chrome 58 이상이며 최신 브라우저 사용을 권장합니다. 모든 실기종을 직접 검사했다는 뜻은 아닙니다.
 
 공식 근거: https://docs.unity3d.com/6000.3/Documentation/Manual/webgl-browsercompatibility.html
+
+## 소리
+
+게임 시작 또는 조작 연습을 누르면 배경음이 재생됩니다. 일반 공격, 충전 공격, 충전 완료, 몬스터 타격·처치, 체력 감소·회복, 성공·실패에 효과음을 넣었습니다. 왼쪽 위 소리 켬/끔 버튼으로 전체 소리를 조절할 수 있고 설정은 다음 실행에도 유지됩니다. 소리는 코드로 합성해 별도의 음원 다운로드가 필요 없습니다.
+

@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>몬스터 스트라이크 러너</title>
-  <link rel="stylesheet" href="style.css?v=1.1.1">
+  <link rel="stylesheet" href="style.css?v=1.1.2">
 </head>
 <body>
   <main id="unity-container">
     <canvas id="unity-canvas" width="480" height="854" tabindex="0" aria-label="몬스터 스트라이크 러너"></canvas>
     <div id="unity-loading-bar" role="status">
-      <img class="hero" src="hero.png?v=1.1.1" alt="플레이어 캐릭터">
+      <img class="hero" src="hero.png?v=1.1.2" alt="플레이어 캐릭터">
       <h1>몬스터 스트라이크<br>러너</h1>
       <p>화살표 버튼으로 이동하고, 공격해 몬스터를 막아 보세요.</p>
       <progress id="progress" max="1" value="0"></progress>
@@ -28,16 +28,16 @@
       if (type !== "error") setTimeout(() => { banner.hidden = true; }, 5000);
     }
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/9e04dba528a53c604a8d2caf7b905d42.loader.js";
+      var loaderUrl = buildUrl + "/83d63de610fba7e5a07ad8a027ace8a6.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/022b28c66d8e0c34f77ab228c52a3972.data.unityweb",
-        frameworkUrl: buildUrl + "/f4054838284b89005d7b24c799302766.framework.js.unityweb",
-        codeUrl: buildUrl + "/e10394a3227b9676b8763e2ddd09f30c.wasm.unityweb",
+        dataUrl: buildUrl + "/a259b1c3751b552b48b3f235db1a8934.data.unityweb",
+        frameworkUrl: buildUrl + "/353e64c436ab7d58f7e41f4d2f9d5ce8.framework.js.unityweb",
+        codeUrl: buildUrl + "/1fafdc252f575cbf16683ed7284fcb0f.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Monster Strike Runner",
-        productVersion: "1.1.1",
+        productVersion: "1.1.2",
         showBanner: unityShowBanner,
         // errorHandler: function(err, url, line) {
         //    alert("error " + err + " occurred at line " + line);
