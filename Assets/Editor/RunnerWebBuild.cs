@@ -11,6 +11,17 @@ public static class RunnerWebBuild
     [MenuItem("Runner/Build Web for GitHub Pages")]
     public static void Build()
     {
+        BuildTo("docs");
+    }
+
+    [MenuItem("Runner/Build Web for Compression Exercise")]
+    public static void BuildExercise()
+    {
+        BuildTo("web");
+    }
+
+    private static void BuildTo(string outputDirectory)
+    {
         PlayerSettings.bundleVersion = "1.1.3";
         PlayerSettings.defaultWebScreenWidth = 480;
         PlayerSettings.defaultWebScreenHeight = 854;
@@ -25,11 +36,11 @@ public static class RunnerWebBuild
         UnityEditor.WebGL.UserBuildSettings.codeOptimization = UnityEditor.WebGL.WasmCodeOptimization.DiskSize;
         OptimizeTexture("Assets/Resources/Characters/RunnerHero.png", 256);
         OptimizeTexture("Assets/Resources/Characters/RunnerMonster.png", 256);
-        OptimizeTexture("Assets/Resources/Backgrounds/ForestRoad.png", 1024);
-        OptimizeTexture("Assets/Resources/Characters/RunnerHeroFrames.png", 1024);
-        OptimizeTexture("Assets/Resources/Characters/RunnerMonsterFrames.png", 1024);
+        OptimizeTexture("Assets/Resources/Backgrounds/ForestRoad.png", 512);
+        OptimizeTexture("Assets/Resources/Characters/RunnerHeroFrames.png", 512);
+        OptimizeTexture("Assets/Resources/Characters/RunnerMonsterFrames.png", 512);
         MakeLoadingThumbnail();
-        string output = Path.GetFullPath("docs");
+        string output = Path.GetFullPath(outputDirectory);
         BuildReport report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
         {
             scenes = new[] { "Assets/Scenes/SampleScene.unity" },

@@ -1,0 +1,38 @@
+{
+  "capturedAt": "2026-11-04",
+  "files": [
+    {
+      "path": ".nojekyll",
+      "bytes": 0
+    },
+    {
+      "path": "hero.png",
+      "bytes": 25173
+    },
+    {
+      "path": "index.html",
+      "bytes": 4412
+    },
+    {
+      "path": "style.css",
+      "bytes": 1277
+    },
+    {
+      "path": "Build\\0f57a3035d7e68aba06244e975c34aea.framework.js.unityweb",
+      "bytes": 75245
+    },
+    {
+      "path": "Build\\86f20ed29115fc787e12ab5bd7a1a336.data.unityweb",
+      "bytes": 4051034
+    },
+    {
+      "path": "Build\\8eb90d5b626eebfa8986e4bc81eda783.loader.js",
+      "bytes": 117894
+    },
+    {
+      "path": "Build\\cd04f79eb509bd10e7724c65bab7e082.wasm.unityweb",
+      "bytes": 6177990
+    }
+  ],
+  "totalBytes": 10453025.0
+}

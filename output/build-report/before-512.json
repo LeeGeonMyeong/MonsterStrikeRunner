@@ -1,0 +1,39 @@
+{
+  "capturedAt": "2026-11-04",
+  "note": "512 Max Size 적용 전 실제 빌드",
+  "files": [
+    {
+      "path": ".nojekyll",
+      "bytes": 0
+    },
+    {
+      "path": "hero.png",
+      "bytes": 23869
+    },
+    {
+      "path": "index.html",
+      "bytes": 4412
+    },
+    {
+      "path": "style.css",
+      "bytes": 1277
+    },
+    {
+      "path": "Build\\21e5a85f64d814d6eaf34bb3e610989f.data.unityweb",
+      "bytes": 5724972
+    },
+    {
+      "path": "Build\\4896a40c28d562081cb32d351a2a004b.framework.js.unityweb",
+      "bytes": 76437
+    },
+    {
+      "path": "Build\\d264b190c1749f61616ce86b3291424b.loader.js",
+      "bytes": 117894
+    },
+    {
+      "path": "Build\\e8e5b546b337b0bce525c225e23148c9.wasm.unityweb",
+      "bytes": 6241350
+    }
+  ],
+  "totalBytes": 12190211.0
+}
