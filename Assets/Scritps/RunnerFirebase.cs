@@ -104,7 +104,67 @@ public sealed class RunnerFirebase : MonoBehaviour
     {
         if (Uid == "") return;
         PlayerPrefs.SetInt(pendingKey, Math.Max(score, PlayerPrefs.GetInt(pendingKey, 0))); PlayerPrefs.Save();
-        if (!busy) StartCoroutine(Save());
+        StartCoroutine(WaitAndSave(Uid));
+    }
+    IEnumerator WaitAndSave(string user)
+    {
+        while (busy) yield return null;
+        if (Uid == user && user != "") yield return Save();
+    }
+    public void CountAd(string kind)
+    {
+        if (Uid == "" || (kind != "interstitial" && kind != "rewarded")) return;
+        string key = "Runner.AdPending." + Uid + "." + kind;
+        PlayerPrefs.SetInt(key, PlayerPrefs.GetInt(key, 0) + 1); PlayerPrefs.Save();
+        StartCoroutine(UploadAds(Uid, kind));
+    }
+    void RetryAds()
+    {
+        if (Uid == "") return;
+        StartCoroutine(UploadAds(Uid, "interstitial"));
+        StartCoroutine(UploadAds(Uid, "rewarded"));
+    }
+    IEnumerator UploadAds(string user, string kind)
+    {
+        while (busy) yield return null;
+        string key = "Runner.AdPending." + user + "." + kind;
+        if (Uid != user || user == "" || PlayerPrefs.GetInt(key, 0) == 0) yield break;
+        busy = true;
+        if (token == "" || Time.realtimeSinceStartupAsDouble >= expires) yield return Authenticate();
+        if (token == "" || Uid != user) { busy = false; yield break; }
+        string url = Database + "/adstats/" + Uri.EscapeDataString(user) + "/" + kind + ".json?auth=" + Uri.EscapeDataString(token);
+        // A conditional PUT avoids overwriting another tab's increment.
+        for (int attempt = 0; attempt < 3; attempt++)
+        {
+            using (var get = UnityWebRequest.Get(url))
+            {
+                get.timeout = 15; get.SetRequestHeader("X-Firebase-ETag", "true");
+                yield return get.SendWebRequest();
+                if (get.result != UnityWebRequest.Result.Success) { Debug.LogWarning("adstats read failed HTTP " + get.responseCode); break; }
+                string json = get.downloadHandler.text.Trim();
+                int old = 0;
+                if (json != "null" && !int.TryParse(json, out old)) { Debug.LogWarning("adstats response invalid"); break; }
+                int pending = PlayerPrefs.GetInt(key, 0);
+                if (old > int.MaxValue - pending) break;
+                using (var put = UnityWebRequest.Put(url, (old + pending).ToString(System.Globalization.CultureInfo.InvariantCulture)))
+                {
+                    put.timeout = 15; put.SetRequestHeader("Content-Type", "application/json");
+                    string etag = get.GetResponseHeader("ETag");
+                    if (string.IsNullOrEmpty(etag)) { Debug.LogWarning("adstats ETag missing"); break; }
+                    put.SetRequestHeader("if-match", etag);
+                    yield return put.SendWebRequest();
+                    if (put.responseCode == 412) continue;
+                    if (put.result == UnityWebRequest.Result.Success)
+                    {
+                        PlayerPrefs.SetInt(key, Math.Max(0, PlayerPrefs.GetInt(key, 0) - pending)); PlayerPrefs.Save();
+                        Debug.Log("adstats " + kind + " saved: " + (old + pending));
+                    }
+                    else Debug.LogWarning("adstats save failed HTTP " + put.responseCode);
+                    break;
+                }
+            }
+        }
+        busy = false;
     }
     IEnumerator Save()
     {
@@ -157,8 +217,9 @@ public sealed class RunnerFirebase : MonoBehaviour
         if (isLogin) login = Button(canvas.transform, "게스트 로그인", -75, GuestLogin);
         else
         {
+            RetryAds();
             Button(canvas.transform, "게임 시작", -65, () => SceneManager.LoadScene("SampleScene"));
-            Button(canvas.transform, "Retry save", -155, () => SaveBest(PlayerPrefs.GetInt(pendingKey, 0)));
+            Button(canvas.transform, "Retry save", -155, () => { SaveBest(PlayerPrefs.GetInt(pendingKey, 0)); RetryAds(); });
             Button(canvas.transform, "Logout", -245, Logout);
         }
     }

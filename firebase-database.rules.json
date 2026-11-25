@@ -9,6 +9,15 @@
         "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000 && newData.val() % 1 === 0 && (!data.exists() || newData.val() >= data.val())" },
         "$other": { ".validate": false }
       }
+    },
+    "adstats": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && newData.exists()",
+        "$kind": {
+          ".validate": "($kind === 'interstitial' || $kind === 'rewarded') && newData.isNumber() && newData.val() >= 0 && newData.val() % 1 === 0 && (!data.exists() || newData.val() >= data.val())"
+        }
+      }
     }
   }
 }

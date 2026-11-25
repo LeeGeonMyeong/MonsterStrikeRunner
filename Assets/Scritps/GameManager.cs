@@ -19,7 +19,12 @@ public class GameManager : MonoBehaviour
     public bool CanControl => IsPlaying || (State == RunState.Tutorial && TutorialStep < 3);
     public int TutorialStep { get; private set; }
     public bool HasLearnedControls => PlayerPrefs.GetInt(TutorialPreferenceKey, 0) == 1;
-    public int CurrentScore => Mathf.Max(0, killScore + ItemScore - deductedScore);
+    public int CurrentScore => Mathf.Max(0, killScore + ItemScore - deductedScore) * (rewardGranted ? 2 : 1);
+    [SerializeField] private float adCooldown = 30f;
+    private static int completedRuns;
+    private static float lastInterstitial = -999f;
+    private bool rewardGranted, rewardPending, restarting;
+    private Button doubleButton;
     public int ItemScore { get; private set; }
     public int ItemsCollected { get; private set; }
     public float ElapsedTime => elapsed;
@@ -60,6 +65,7 @@ public class GameManager : MonoBehaviour
         gameObject.AddComponent<RunnerAudio>();
         gameObject.AddComponent<RunnerBackground>();
         gameObject.AddComponent<RunnerItemSpawner>();
+        gameObject.AddComponent<DummyAds>();
         font = Resources.Load<Font>("Fonts/RunnerKorean");
         if (font == null) throw new MissingReferenceException("한글 글꼴 RunnerKorean을 찾을 수 없습니다.");
         hpText.font = font;
@@ -96,7 +102,9 @@ public class GameManager : MonoBehaviour
         panelRect.anchorMax = Vector2.one;
         panelRect.offsetMin = panelRect.offsetMax = Vector2.zero;
         gameOverPanel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.85f);
-        result = MakeText("Result", gameOverPanel.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, 100f), new Vector2(460f, 245f), 30);
+        result = MakeText("Result", gameOverPanel.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, 165f), new Vector2(460f, 245f), 30);
+        doubleButton = MakeControlButton("DoubleScoreButton", gameOverPanel.transform, new Vector2(0, -5), new Vector2(340,65), "광고 보고 점수 2배", new Vector2(.5f,.5f));
+        doubleButton.onClick.AddListener(WatchAdForDouble);
         GameObject buttonObject = new GameObject("RestartButton", typeof(RectTransform), typeof(Image), typeof(Button));
         buttonObject.transform.SetParent(gameOverPanel.transform, false);
         Place((RectTransform)buttonObject.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -85f), new Vector2(280f, 80f));
@@ -128,6 +136,8 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         UpdateFeedback();
+        if (State == RunState.Ended && doubleButton != null)
+            doubleButton.gameObject.SetActive(!rewardGranted && !rewardPending && !restarting && DummyAds.Instance != null && DummyAds.Instance.IsRewardedReady());
         if (!IsPlaying) return;
         elapsed = Mathf.Min(duration, elapsed + Time.deltaTime);
         RefreshStatus();
@@ -150,6 +160,7 @@ public class GameManager : MonoBehaviour
         itemNoticeTime = 0f;
         foreach (RunnerItem item in FindObjectsByType<RunnerItem>(FindObjectsSortMode.None)) item.gameObject.SetActive(false);
         State = RunState.Ended;
+        completedRuns++;
         RunnerAudio.Instance?.Finish(survived);
         result.text = (survived ? "방어 성공!" : "게임 종료") + "\n최종 점수 " + CurrentScore + "\n처치 " + Kills + " / 놓침 " + Misses + "\n아이템 " + ItemsCollected + "개 / 보너스 " + ItemScore;
         SetControlsVisible(false);
@@ -159,7 +170,42 @@ public class GameManager : MonoBehaviour
         versionLabel.transform.SetAsLastSibling();
         soundButton.transform.SetAsLastSibling();
     }
-    private void Restart() { SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); }
+    private void Restart()
+    {
+        if (restarting || rewardPending || (DummyAds.Instance != null && DummyAds.Instance.IsShowing)) return;
+        restarting = true;
+        if (CanShowInterstitial(completedRuns, Time.realtimeSinceStartup, lastInterstitial, adCooldown, DummyAds.Instance != null && DummyAds.Instance.IsInterstitialReady()))
+        {
+            lastInterstitial = Time.realtimeSinceStartup;
+            RunnerFirebase.Instance?.CountAd("interstitial");
+            DummyAds.Instance.ShowInterstitial(Reload);
+        }
+        else Reload();
+    }
+    public static bool CanShowInterstitial(int runs, float now, float last, float cooldown, bool ready)
+        => runs >= 2 && now - last >= cooldown && ready;
+    private void Reload()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void WatchAdForDouble()
+    {
+        if (State != RunState.Ended || rewardGranted || rewardPending || restarting || DummyAds.Instance == null || !DummyAds.Instance.IsRewardedReady()) return;
+        rewardPending = true;
+        DummyAds.Instance.ShowRewarded(OnRewardClosed);
+    }
+    private void OnRewardClosed(bool earned)
+    {
+        if (!rewardPending) return;
+        rewardPending = false;
+        if (!earned || rewardGranted || State != RunState.Ended) return;
+        rewardGranted = true;
+        RunnerFirebase.Instance?.CountAd("rewarded");
+        result.text = "광고 보상 완료!\n최종 점수 " + CurrentScore + "\n처치 " + Kills + " / 놓침 " + Misses + "\n아이템 " + ItemsCollected + "개 / 보너스 " + ItemScore;
+        doubleButton.gameObject.SetActive(false);
+        RunnerFirebase.Instance?.SaveBest(CurrentScore);
+    }
     private void OnDestroy() { if (Instance == this) Instance = null; }
     public void StartGame()
     {

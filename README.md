@@ -1,5 +1,19 @@
 # Monster Strike Runner v1.1.3
 
+## 11강 제출 — 전면·보상형 더미 광고
+
+제출 주소: https://monsterstrikerunner.dldl26607.workers.dev/
+
+사용자가 제공한 수업용 `DummyAds.cs`를 사용합니다. 실제 광고·수익은 발생하지 않습니다. GameManager가 게임 씬에 DummyAds를 생성하며, 첫 판에는 전면 광고를 생략합니다. 두 번째 게임오버 이후 다시 시작할 때 준비된 광고가 있고 마지막 전면 광고에서 30초가 지났으면 표시합니다. 전면 광고의 3초 카운트 후 X를 누르면 다음 판으로 이동합니다.
+
+결과 화면의 `광고 보고 점수 2배`는 보상형 광고가 준비됐을 때만 표시합니다. 5초를 끝까지 보고 X를 누르면 한 판에 한 번만 점수가 2배가 되고 최고 점수도 다시 저장합니다. 중도 닫기·표시 불가는 보상 없이 복귀합니다. No Fill이면 버튼을 숨기고 다시하기는 광고 없이 진행합니다. `DummyAds.noFill`, `useBidding`, `networks`와 `100회 시뮬레이션`은 수업 원본 인터페이스를 유지합니다.
+
+광고 횟수는 `adstats/{uid}/interstitial`, `adstats/{uid}/rewarded`에 기록합니다. 수업 기준대로 전면 광고는 표시 시도 직전 준비 상태를 확인한 뒤, 보상형은 보상 완료 시 카운트합니다. 전송 전 로컬에 UID별 대기 횟수를 보관하고, 서버 값을 읽어 ETag 조건부 PUT으로 누적합니다. 실패한 대기 기록은 Menu 진입 또는 Retry save에서 재전송합니다. 서버 응답이 끊겨 성공 여부가 불확실한 경우 중복 카운트 가능성까지 제거한 과금용 집계는 아니며, 수업용 통계입니다.
+
+Firebase에는 루트의 `firebase-database.rules.json` 전체를 게시해야 합니다. scores 규칙을 유지하면서 adstats 읽기·쓰기를 본인 UID로 제한합니다. 코드 커밋만으로 Firebase 콘솔 규칙이 게시되지는 않습니다.
+
+검증: `RunnerAdsCheck.Start`의 Unity Play Mode 자동 검사에서 첫 판·쿨다운·준비 상태 조건, 광고 중 게임/소리 정지, 중도 닫기 무보상, 완주 점수 2배, 중복 콜백 차단, No Fill 준비 상태, 광고 종료 후 복구를 확인합니다. 이 검사는 실제 계정·점수 데이터를 변경하지 않습니다.
+
 ## Firebase 로그인·점수 저장 (10강)
 
 Unity Build Profiles의 시작 씬은 `Login`, 이후 `Menu`, `SampleScene` 순서입니다. `Runner > Setup Firebase Scenes`로 로그인·메뉴 씬을 생성할 수 있으며 웹 빌드 메뉴에서도 자동 실행됩니다. 로그인 화면과 메뉴 UI는 `RunnerFirebase`가 런타임에 구성합니다.
