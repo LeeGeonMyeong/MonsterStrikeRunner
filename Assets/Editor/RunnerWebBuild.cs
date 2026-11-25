@@ -22,6 +22,7 @@ public static class RunnerWebBuild
 
     private static void BuildTo(string outputDirectory)
     {
+        RunnerFirebaseSetup.Setup();
         PlayerSettings.bundleVersion = "1.1.3";
         PlayerSettings.defaultWebScreenWidth = 480;
         PlayerSettings.defaultWebScreenHeight = 854;
@@ -43,7 +44,7 @@ public static class RunnerWebBuild
         string output = Path.GetFullPath(outputDirectory);
         BuildReport report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
         {
-            scenes = new[] { "Assets/Scenes/SampleScene.unity" },
+            scenes = new[] { "Assets/Scenes/Login.unity", "Assets/Scenes/Menu.unity", "Assets/Scenes/SampleScene.unity" },
             locationPathName = output,
             target = BuildTarget.WebGL,
             options = BuildOptions.None

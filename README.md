@@ -1,5 +1,18 @@
 # Monster Strike Runner v1.1.3
 
+## Firebase 로그인·점수 저장 (10강)
+
+Unity Build Profiles의 시작 씬은 `Login`, 이후 `Menu`, `SampleScene` 순서입니다. `Runner > Setup Firebase Scenes`로 로그인·메뉴 씬을 생성할 수 있으며 웹 빌드 메뉴에서도 자동 실행됩니다. 로그인 화면과 메뉴 UI는 `RunnerFirebase`가 런타임에 구성합니다.
+
+- 게스트 로그인 버튼으로 새 손님을 만들거나 저장된 refreshToken으로 같은 손님의 세션을 갱신합니다. 자동 로그인은 하지 않습니다.
+- 로그아웃은 메모리의 UID와 토큰만 지웁니다. 같은 브라우저에서 다시 로그인하면 같은 손님 번호가 나옵니다.
+- 게임 종료 시 UID별 로컬 최고 점수와 서버 기록을 비교하고 `scores/{uid}`에 `{name, score}`를 저장합니다. 실패해도 게임은 계속되며 Menu의 `Retry save`로 재시도할 수 있습니다.
+- API 키는 공개 프로젝트 식별자입니다. ID 토큰과 refreshToken은 로그에 출력하지 않습니다. refreshToken은 PlayerPrefs에 저장합니다.
+- Realtime Database에는 루트의 `firebase-database.rules.json`을 게시합니다. 본인 기록만 쓰고, 낮은 점수로 덮어쓰지 못하도록 검증합니다. 이 규칙으로도 범위 안의 자기 점수 조작까지 방지하지는 않습니다.
+- 실제 REST 검증: 익명 로그인 및 refresh 시 UID 유지 성공, 본인 0점 PUT/GET 성공, 미인증 PUT 401 차단 확인. Firebase에 보이는 0점 테스트 손님은 실제 플레이 기록이 아닙니다.
+
+제출 전 배포본에서 게스트 로그인 → 한 판 → Menu로 복귀 → 새로고침 후 같은 손님 번호 확인을 진행합니다. Firebase 데이터 탭에서 해당 UID의 name과 score를 캡처합니다. 시크릿 창은 별도 손님이어야 합니다.
+
 몬스터를 공격해 처치하고 방어선을 지키는 모바일 세로형 2D 러너입니다. 시작 → 전투 → 결과 → 재시작으로 한 판을 반복합니다.
 
 ## 전투 규칙

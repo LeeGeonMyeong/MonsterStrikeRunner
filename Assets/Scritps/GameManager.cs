@@ -106,6 +106,10 @@ public class GameManager : MonoBehaviour
         button.onClick.AddListener(Restart);
         Text label = MakeText("Label", buttonObject.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(280f, 80f), 30);
         label.text = "다시 시작";
+        Text cloudStatus = MakeText("CloudStatus", gameOverPanel.transform, new Vector2(.5f,.5f), new Vector2(0,-165), new Vector2(460,55), 18);
+        RunnerFirebase.Instance?.BindStatus(cloudStatus);
+        Button menu = MakeControlButton("MenuButton", gameOverPanel.transform, new Vector2(0,-240), new Vector2(280,60), "Menu", new Vector2(.5f,.5f));
+        menu.onClick.AddListener(() => RunnerFirebase.Instance.ReturnToMenu());
         gameOverPanel.SetActive(false);
         BuildStartScreen();
         BuildTutorial();
@@ -150,6 +154,7 @@ public class GameManager : MonoBehaviour
         result.text = (survived ? "방어 성공!" : "게임 종료") + "\n최종 점수 " + CurrentScore + "\n처치 " + Kills + " / 놓침 " + Misses + "\n아이템 " + ItemsCollected + "개 / 보너스 " + ItemScore;
         SetControlsVisible(false);
         gameOverPanel.SetActive(true);
+        RunnerFirebase.Instance?.SaveBest(CurrentScore);
         gameOverPanel.transform.SetAsLastSibling();
         versionLabel.transform.SetAsLastSibling();
         soundButton.transform.SetAsLastSibling();
